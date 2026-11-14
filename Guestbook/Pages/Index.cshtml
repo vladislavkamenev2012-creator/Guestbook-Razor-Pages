@@ -1,0 +1,57 @@
+@page
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Гостевая книга";
+}
+
+<h2>Гостевая книга</h2>
+
+<div style="margin-bottom: 20px;">
+    @if (!Model.IsAuthenticated)
+    {
+        <a asp-page="/Account/Login">Вход в систему</a>
+        <span> | </span>
+        <a asp-page="/Account/Register">Регистрация</a>
+    }
+    else
+    {
+        <span>Добро пожаловать, <b>@Model.UserName</b>!</span>
+        <a asp-page="/Account/Logout" class="btn btn-secondary" style="margin-left: 10px;">Выход</a>
+    }
+</div>
+
+@if (Model.IsAuthenticated)
+{
+    <form method="post" asp-page-handler="AddMessage" style="margin-bottom: 30px;">
+        <div class="form-group">
+            <label asp-for="MessageText"></label>
+            <textarea asp-for="MessageText" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="MessageText" class="text-danger"></span>
+        </div>
+        <br />
+        <button type="submit" class="btn btn-primary">Добавить сообщение</button>
+    </form>
+}
+
+<h3>Сообщения:</h3>
+<div class="messages">
+@foreach (var msg in Model.Messages)
+{
+    <div class="message">
+    <table border="1" cellpadding="8" cellspacing="0" style="width: 100%; margin-bottom: 15px;">
+        <tr>
+            <td><b>Пользователь:</b> @msg.User?.Name</td>
+            <td><b>Дата и время:</b> @msg.MessageDate.ToString("dd.MM.yyyy HH:mm:ss")</td>
+        </tr>
+        <tr>
+            <td colspan="2">@msg.MessageText</td>
+        </tr>
+    </table>
+    </div>
+}
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
